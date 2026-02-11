@@ -1,0 +1,6 @@
+# Supabase configuration file
+# Add your Supabase project configuration here
+
+[api]
+enabled = true
+port = 54321

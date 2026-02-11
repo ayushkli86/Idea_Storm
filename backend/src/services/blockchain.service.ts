@@ -1,29 +1,30 @@
 import { ethers } from 'ethers';
 import logger from '../utils/logger';
 import { AppError } from '../utils/AppError';
+import { MEDICINE_VERIFICATION_ABI } from '../config/contractABI';
 
 class BlockchainService {
   private provider: ethers.JsonRpcProvider;
   private wallet: ethers.Wallet;
-  private contract: ethers.Contract | null = null;
+  private contract: ethers.Contract;
 
   constructor() {
     this.provider = new ethers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL);
     this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, this.provider);
+    
+    // Initialize contract immediately
+    this.contract = new ethers.Contract(
+      process.env.CONTRACT_ADDRESS!,
+      MEDICINE_VERIFICATION_ABI,
+      this.wallet
+    );
+    
+    logger.info('Blockchain service initialized with contract at ' + process.env.CONTRACT_ADDRESS);
   }
 
   async initializeContract(abi: any[]) {
-    try {
-      this.contract = new ethers.Contract(
-        process.env.CONTRACT_ADDRESS!,
-        abi,
-        this.wallet
-      );
-      logger.info('Blockchain contract initialized');
-    } catch (error) {
-      logger.error('Failed to initialize contract', error);
-      throw new AppError('Blockchain initialization failed', 500);
-    }
+    // Already initialized in constructor
+    logger.info('Contract already initialized');
   }
 
   async registerMedicine(

@@ -1,8 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 import { errorHandler } from './middleware/errorHandler';
 import { rateLimiter } from './middleware/rateLimiter';
 import logger from './utils/logger';
@@ -13,8 +15,6 @@ import medicineRoutes from './routes/medicine.routes';
 import verificationRoutes from './routes/verification.routes';
 import analyticsRoutes from './routes/analytics.routes';
 import userRoutes from './routes/user.routes';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

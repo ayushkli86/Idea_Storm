@@ -37,8 +37,17 @@ class MedicineController {
         created_at: new Date().toISOString()
       });
 
-      // Generate QR code
-      const qrCode = await qrService.generateQRCode(productId, medicine);
+      // Generate QR code payload
+      const qrPayload = await qrService.createQRPayload(productId);
+      
+      // Store QR record in database
+      await databaseService.storeQRRecord(qrPayload.qrHash, productId, qrPayload.expiresAt);
+      
+      // Register QR hash on blockchain
+      await blockchainService.registerQRHash(qrPayload.qrHash, productId);
+      
+      // Generate QR image
+      const qrCodeImage = await qrService.generateQRImage(qrPayload);
 
       logger.info(`Medicine registered: ${productId}`);
 
@@ -46,7 +55,7 @@ class MedicineController {
         message: 'Medicine registered successfully',
         medicine: {
           ...medicine,
-          qrCode
+          qrCode: qrCodeImage
         },
         blockchain: blockchainResult
       });

@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Shield, QrCode, Lock, BarChart3, Globe, CheckCircle2, ChevronRight, Blocks } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-image.jpg";
 
 const features = [
   {
@@ -38,11 +37,7 @@ const Landing = () => {
       {/* Hero */}
       <section className="relative overflow-hidden pt-16">
         <div className="absolute inset-0 gradient-dark opacity-95" />
-        <img
-          src={heroImage}
-          alt="Blockchain medicine verification"
-          className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-40"
-        />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700" />
         <div className="relative container mx-auto px-4 py-24 md:py-36">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 border border-primary/25 text-sm font-medium text-primary">

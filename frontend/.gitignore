@@ -10,7 +10,10 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-*.local
+*.locaVITE_SUPABASE_PROJECT_ID="dvehlfdifzekyphomhjx"
+VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2ZWhsZmRpZnpla3lwaG9taGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3OTU4OTYsImV4cCI6MjA4NjM3MTg5Nn0.DuwYXHWHQNo3btsoeonPbmoBozDvJ92n0qRTIraxv7g"
+VITE_SUPABASE_URL="https://dvehlfdifzekyphomhjx.supabase.co"
+l
 
 # Editor directories and files
 .vscode/*

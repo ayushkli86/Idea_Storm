@@ -1,15 +1,13 @@
-import QRCode from 'qrcode';
-
-export async function generateQR(text: string): Promise<string> {
-  try {
-    return await QRCode.toDataURL(text);
-  } catch (err) {
-    console.error('Error generating QR code:', err);
-    throw err;
-  }
-}
-
-export function decodeQR(data: string): string {
-  // QR decoding logic - typically handled by a scanner library
-  return data;
+export function generateMedicineHash(
+  batchNo: string,
+  manufacturerId: string,
+  expiry: string
+) {
+  const data = `${batchNo}-${manufacturerId}-${expiry}`;
+  return crypto.subtle.digest("SHA-256", new TextEncoder().encode(data))
+    .then(buffer =>
+      Array.from(new Uint8Array(buffer))
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("")
+    );
 }

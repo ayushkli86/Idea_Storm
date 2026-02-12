@@ -1,18 +1,16 @@
-import { useState, FormEvent, useEffect } from 'react';
-import { useNavigate, Link, Navigate } from 'react-router-dom';
+import { useState, FormEvent } from 'react';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import AuthLayout from '@/components/AuthLayout';
 import { Button } from '@/components/ui/button';
-import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Mail, Loader2, ArrowLeft } from 'lucide-react';
 
-const Login = () => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const { signIn, user, loading } = useAuth();
+  const [emailSent, setEmailSent] = useState(false);
+  const { user, loading, resetPassword } = useAuth();
   const { toast } = useToast();
 
   // Redirect if already authenticated
@@ -25,16 +23,16 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      await signIn(email, password);
+      await resetPassword(email);
+      setEmailSent(true);
       toast({
-        title: "Welcome back!",
-        description: "You have successfully logged in.",
+        title: "Email Sent!",
+        description: "Check your email for password reset instructions.",
       });
-      navigate('/');
     } catch (error: any) {
       toast({
-        title: "Login Failed",
-        description: error.message || "Invalid email or password",
+        title: "Error",
+        description: error.message || "Failed to send reset email",
         variant: "destructive"
       });
     } finally {
@@ -53,12 +51,56 @@ const Login = () => {
     );
   }
 
+  if (emailSent) {
+    return (
+      <AuthLayout>
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Mail className="w-8 h-8 text-teal-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Check Your Email</h2>
+            <p className="text-slate-600 text-sm mb-6">
+              We've sent password reset instructions to <span className="font-semibold">{email}</span>
+            </p>
+            <p className="text-slate-500 text-xs mb-6">
+              Didn't receive the email? Check your spam folder or try again.
+            </p>
+            <div className="space-y-3">
+              <Button
+                onClick={() => setEmailSent(false)}
+                variant="outline"
+                className="w-full"
+              >
+                Try Another Email
+              </Button>
+              <Link to="/login" className="block">
+                <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white">
+                  Back to Log In
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </AuthLayout>
+    );
+  }
+
   return (
     <AuthLayout>
       <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Welcome Back</h2>
-          <p className="text-slate-600 text-sm">Log in to continue to Sahi Aaushadi</p>
+          <Link 
+            to="/login" 
+            className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 mb-4 transition"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Log In
+          </Link>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Forgot Password?</h2>
+          <p className="text-slate-600 text-sm">
+            Enter your email address and we'll send you instructions to reset your password.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -82,46 +124,6 @@ const Login = () => {
             </div>
           </div>
 
-          {/* Password Field */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700">
-                Password
-              </label>
-              <Link 
-                to="/forgot-password" 
-                className="text-xs text-teal-600 hover:text-teal-700 font-semibold"
-              >
-                Forgot password?
-              </Link>
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={isLoading}
-                className="w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition disabled:opacity-50"
-              >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
-              </button>
-            </div>
-          </div>
-
           {/* Submit Button */}
           <Button
             type="submit"
@@ -131,10 +133,10 @@ const Login = () => {
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Logging in...
+                Sending...
               </>
             ) : (
-              'Log In'
+              'Send Reset Instructions'
             )}
           </Button>
         </form>
@@ -153,4 +155,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

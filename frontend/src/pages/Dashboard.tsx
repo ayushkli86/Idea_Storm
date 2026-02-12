@@ -97,13 +97,23 @@ const Dashboard = () => {
     },
   ];
   return (
-    <div className="min-h-screen pt-16 bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-800 mb-2">Welcome back, Admin</h1>
-          <p className="text-slate-500">Here are the latest updates of today</p>
-        </div>
+    <div className="min-h-screen pt-16 bg-white relative">
+      {/* Gradient Overlay */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'linear-gradient(135deg, #163A2C 0%, #1B4433 35%, #0F2A21 70%, #0B2019 100%)'
+        }}
+      />
+      
+      {/* Content - keeping original styling for now, can be updated incrementally */}
+      <div className="relative z-10">
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+          {/* Header Section */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Welcome back, Admin</h1>
+            <p className="text-white/70">Here are the latest updates of today</p>
+          </div>
 
         {/* Top Stats Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -540,6 +550,7 @@ const Dashboard = () => {
             )}
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </div>
   );

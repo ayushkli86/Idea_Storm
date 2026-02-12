@@ -17,14 +17,25 @@ const DDAView = () => {
   // Error state
   if (isError) {
     return (
-      <div className="min-h-screen pt-16 bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <EmptyState
-            icon={AlertTriangle}
-            title="Failed to Load DDA Dashboard"
-            description="Unable to fetch regulatory data. Please check your connection and try again."
-            action={<Button onClick={() => window.location.reload()}>Retry</Button>}
-          />
+      <div className="min-h-screen pt-16 bg-white relative">
+        {/* Gradient Overlay */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'linear-gradient(135deg, #163A2C 0%, #1B4433 35%, #0F2A21 70%, #0B2019 100%)'
+          }}
+        />
+        
+        {/* Content */}
+        <div className="relative z-10">
+          <div className="container mx-auto px-4 py-8">
+            <EmptyState
+              icon={AlertTriangle}
+              title="Failed to Load DDA Dashboard"
+              description="Unable to fetch regulatory data. Please check your connection and try again."
+              action={<Button onClick={() => window.location.reload()}>Retry</Button>}
+            />
+          </div>
         </div>
       </div>
     );
@@ -72,20 +83,30 @@ const DDAView = () => {
     { region: "Terai Region", before: 61, after: Math.max(28, flaggedBatches * 5) },
   ];
   return (
-    <div className="min-h-screen pt-16 bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Shield className="w-5 h-5 text-secondary" />
-              <h1 className="text-2xl font-bold text-foreground">DDA Regulator View</h1>
+    <div className="min-h-screen pt-16 bg-white relative">
+      {/* Gradient Overlay */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'linear-gradient(135deg, #163A2C 0%, #1B4433 35%, #0F2A21 70%, #0B2019 100%)'
+        }}
+      />
+      
+      {/* Content */}
+      <div className="relative z-10">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Shield className="w-5 h-5 text-teal-300" />
+                <h1 className="text-2xl font-bold text-white">DDA Regulator View</h1>
+              </div>
+              <p className="text-sm text-white/70">Department of Drug Administration — Nepal</p>
             </div>
-            <p className="text-sm text-muted-foreground">Department of Drug Administration — Nepal</p>
+            <Badge variant="outline" className="border-teal-300 text-teal-300 bg-white/10 backdrop-blur-sm">
+              DDA Code 2080
+            </Badge>
           </div>
-          <Badge variant="outline" className="border-secondary text-secondary">
-            DDA Code 2080
-          </Badge>
-        </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -192,6 +213,7 @@ const DDAView = () => {
               <p className="text-xs text-muted-foreground">All medicines are verified and compliant</p>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

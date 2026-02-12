@@ -7,6 +7,7 @@ import { ChatBotProvider } from "@/components/chatbot";
 import MedicineChatBot from "@/components/chatbot/MedicineChatBot";
 import Navbar from "./components/Navbar";
 import Landing from "./pages/Landing";
+import Auth from "./pages/Auth";
 import Verify from "./pages/Verify";
 import Dashboard from "./pages/Dashboard";
 import DDAView from "./pages/DDAView";
@@ -24,6 +25,9 @@ const App = () => (
           <Navbar />
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/login" element={<Auth />} />
+            <Route path="/signup" element={<Auth />} />
             <Route path="/verify" element={<Verify />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/regulator" element={<DDAView />} />

@@ -18,6 +18,19 @@ interface VerificationResult {
   checks?: any;
 }
 
+interface Position {
+  x: number;
+  y: number;
+}
+
+interface DragState {
+  isDragging: boolean;
+  startX: number;
+  startY: number;
+  initialX: number;
+  initialY: number;
+}
+
 const MedicineChatBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -30,7 +43,19 @@ const MedicineChatBot: React.FC = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  
+  // Drag functionality state
+  const [position, setPosition] = useState<Position>({ x: 30, y: 30 }); // Initial bottom-right position
+  const [dragState, setDragState] = useState<DragState>({
+    isDragging: false,
+    startX: 0,
+    startY: 0,
+    initialX: 0,
+    initialY: 0
+  });
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatBoxRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const scrollToBottom = () => {
@@ -200,13 +225,6 @@ const MedicineChatBot: React.FC = () => {
     addMessage(botResponse, 'bot');
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
@@ -215,17 +233,205 @@ const MedicineChatBot: React.FC = () => {
     setIsOpen(false);
   };
 
+  // ===============================
+  // DRAG FUNCTIONALITY
+  // ===============================
+  
+  /**
+   * Get viewport boundaries for right/bottom positioning
+   * Since we use right/bottom CSS properties, bounds are calculated differently
+   */
+  const getViewportBounds = () => {
+    const chatBoxWidth = 350;
+    const chatBoxHeight = 500;
+    
+    return {
+      minX: 0,                                    // Minimum distance from right edge
+      minY: 0,                                    // Minimum distance from bottom edge  
+      maxX: window.innerWidth - chatBoxWidth,    // Maximum distance from right edge
+      maxY: window.innerHeight - chatBoxHeight   // Maximum distance from bottom edge
+    };
+  };
+
+  /**
+   * Constrain position within viewport boundaries for right/bottom positioning
+   */
+  const constrainPosition = (x: number, y: number): Position => {
+    const bounds = getViewportBounds();
+    return {
+      x: Math.max(bounds.minX, Math.min(bounds.maxX, x)),
+      y: Math.max(bounds.minY, Math.min(bounds.maxY, y))
+    };
+  };
+
+  /**
+   * Handle drag start (mouse and touch) - CORRECTED FOR RIGHT/BOTTOM
+   */
+  const handleDragStart = (clientX: number, clientY: number) => {
+    if (!chatBoxRef.current) return;
+
+    const rect = chatBoxRef.current.getBoundingClientRect();
+    
+    // Convert current position to right/bottom values
+    // right = window.innerWidth - rect.right
+    // bottom = window.innerHeight - rect.bottom
+    const currentRightDistance = window.innerWidth - rect.right;
+    const currentBottomDistance = window.innerHeight - rect.bottom;
+    
+    setDragState({
+      isDragging: true,
+      startX: clientX,
+      startY: clientY,
+      initialX: currentRightDistance,  // Distance from right edge
+      initialY: currentBottomDistance  // Distance from bottom edge
+    });
+
+    // Add dragging class for visual feedback
+    chatBoxRef.current.classList.add('dragging');
+    
+    // Prevent text selection during drag
+    document.body.style.userSelect = 'none';
+    document.body.style.webkitUserSelect = 'none';
+  };
+
+  /**
+   * Handle drag move (mouse and touch) - CORRECTED FOR RIGHT/BOTTOM POSITIONING
+   * Since we use right/bottom CSS properties:
+   * - right: distance from right edge (higher value = more left)
+   * - bottom: distance from bottom edge (higher value = more up)
+   * To achieve normal drag behavior, we need to invert the delta calculations
+   */
+  const handleDragMove = (clientX: number, clientY: number) => {
+    if (!dragState.isDragging || !chatBoxRef.current) return;
+
+    // Calculate movement delta from initial drag position
+    const deltaX = clientX - dragState.startX;
+    const deltaY = clientY - dragState.startY;
+    
+    // CORRECTED LOGIC for right/bottom positioning:
+    // When cursor moves RIGHT (+deltaX), we want chatbox to move RIGHT
+    // Since right property moves element LEFT when increased, we SUBTRACT deltaX
+    // When cursor moves DOWN (+deltaY), we want chatbox to move DOWN  
+    // Since bottom property moves element UP when increased, we SUBTRACT deltaY
+    const newX = dragState.initialX - deltaX;  // Inverted for 'right' property
+    const newY = dragState.initialY - deltaY;  // Inverted for 'bottom' property
+    
+    // Constrain position within viewport boundaries
+    const constrainedPosition = constrainPosition(newX, newY);
+    setPosition(constrainedPosition);
+  };
+
+  /**
+   * Handle drag end
+   */
+  const handleDragEnd = () => {
+    if (!dragState.isDragging || !chatBoxRef.current) return;
+
+    setDragState(prev => ({ ...prev, isDragging: false }));
+    
+    // Remove dragging class
+    chatBoxRef.current.classList.remove('dragging');
+    
+    // Restore text selection
+    document.body.style.userSelect = '';
+    document.body.style.webkitUserSelect = '';
+  };
+
+  // Mouse event handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Only allow dragging from header area
+    const target = e.target as HTMLElement;
+    if (target.closest('#chat-header') && !target.closest('#close-btn')) {
+      e.preventDefault();
+      handleDragStart(e.clientX, e.clientY);
+    }
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    handleDragMove(e.clientX, e.clientY);
+  };
+
+  const handleMouseUp = () => {
+    handleDragEnd();
+  };
+
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    // Only allow dragging from header area
+    const target = e.target as HTMLElement;
+    if (target.closest('#chat-header') && !target.closest('#close-btn')) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleDragStart(touch.clientX, touch.clientY);
+    }
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (dragState.isDragging) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleDragMove(touch.clientX, touch.clientY);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    handleDragEnd();
+  };
+
+  // Effect to handle global mouse/touch events during drag
+  useEffect(() => {
+    if (dragState.isDragging) {
+      // Mouse events
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      // Touch events
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
+      };
+    }
+  }, [dragState.isDragging, dragState.startX, dragState.startY, dragState.initialX, dragState.initialY]);
+
+  // Effect to handle window resize - reposition if outside bounds
+  useEffect(() => {
+    const handleResize = () => {
+      setPosition(prev => constrainPosition(prev.x, prev.y));
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <>
       {/* Floating Chat Button */}
       <div id="chatbot-btn" onClick={toggleChat}>
-        <img src="/icon.png" alt="Medicine Chatbot" />
+        <img src="/icon.svg" alt="Medicine Chatbot" />
       </div>
 
       {/* Chatbot Box */}
       {isOpen && (
-        <div id="chatbot-box">
-          <div id="chat-header">
+        <div 
+          id="chatbot-box"
+          ref={chatBoxRef}
+          style={{
+            right: `${position.x}px`,
+            bottom: `${position.y}px`,
+            cursor: dragState.isDragging ? 'grabbing' : 'default'
+          }}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+        >
+          <div 
+            id="chat-header"
+            style={{ cursor: 'grab' }}
+          >
             <span id="close-btn" onClick={closeChat}>✖</span>
           </div>
 
@@ -264,7 +470,7 @@ const MedicineChatBot: React.FC = () => {
               placeholder="Ask about medicine..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleSendMessage())}
             />
             <button id="send-btn" onClick={handleSendMessage}>
               Send

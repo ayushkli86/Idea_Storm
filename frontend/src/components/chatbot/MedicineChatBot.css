@@ -1,40 +1,66 @@
 /* ===============================
-   FLOATING ROBOT BUTTON (DOUBLE SIZE)
+   FLOATING ROBOT BUTTON (RESPONSIVE CLAMP SCALING)
    =============================== */
 #chatbot-btn {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  width: 180px;          /* 🔥 DOUBLE SIZE */
-  height: 180px;         /* 🔥 DOUBLE SIZE */
+  /* 🎯 SMOOTH SCALING: clamp(min, preferred, max) */
+  /* Scales from 80px (mobile) to 200px (large desktop) based on viewport width */
+  width: clamp(80px, 12vw, 200px);
+  height: clamp(80px, 12vw, 200px);
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 9999;
+  border: none;
+  outline: none;
+  /* Smooth transition for size changes */
+  transition: transform 0.2s ease, width 0.3s ease, height 0.3s ease;
 }
 
-/* Robot Image – FULL SIZE */
+/* Robot Image – FULL SIZE with transparent background */
 #chatbot-btn img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   transition: transform 0.2s ease;
+  background: transparent;
+  border-radius: 0;
 }
 
-/* Hover effect */
+/* Enhanced hover effect with smooth scaling */
 #chatbot-btn:hover img {
   transform: scale(1.08);
 }
 
+/* Hover state for button */
+#chatbot-btn:hover {
+  background: transparent !important;
+  box-shadow: none;
+  /* Subtle scale on hover for better UX */
+  transform: scale(1.02);
+}
+
+#chatbot-btn:focus {
+  background: transparent !important;
+  outline: none;
+  box-shadow: none;
+}
+
+#chatbot-btn:active {
+  background: transparent !important;
+  transform: scale(0.98);
+}
+
 /* ===============================
-   CHAT BOX (UNCHANGED SIZE)
+   CHAT BOX (DRAGGABLE & FLOATING)
    =============================== */
 #chatbot-box {
   position: fixed;
-  bottom: 220px;     /* 🔥 adjusted because icon is big */
-  right: 30px;
+  /* Dynamic positioning via React state - bottom and right set via style prop */
   width: 350px;      /* Slightly wider for better readability */
   height: 500px;     /* Slightly taller for more messages */
   background: #ffffff;
@@ -45,10 +71,22 @@
   overflow: hidden;
   z-index: 9999;
   font-family: "Inter", Arial, sans-serif;
+  transition: box-shadow 0.2s ease; /* Smooth shadow transition */
+}
+
+/* Dragging state styles */
+#chatbot-box.dragging {
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.25);
+  transform: scale(1.02);
+  transition: transform 0.1s ease;
+}
+
+#chatbot-box.dragging #chat-header {
+  cursor: grabbing !important;
 }
 
 /* ===============================
-   CHAT HEADER WITH IMAGE
+   CHAT HEADER WITH IMAGE (DRAG HANDLE)
    =============================== */
 #chat-header {
   position: relative;
@@ -61,6 +99,21 @@
   align-items: center;
   justify-content: flex-end;
   padding: 0 14px;
+  cursor: grab; /* Indicate draggable area */
+  user-select: none; /* Prevent text selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Drag handle visual feedback */
+#chat-header:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  background-blend-mode: overlay;
+}
+
+#chat-header:active {
+  cursor: grabbing;
 }
 
 /* Close button */
@@ -79,6 +132,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Prevent close button from triggering drag */
+  pointer-events: auto;
 }
 
 #close-btn:hover {
@@ -242,21 +297,22 @@
 }
 
 /* ===============================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN (ENHANCED FOR CLAMP SCALING)
    =============================== */
 @media (max-width: 768px) {
   #chatbot-btn {
-    width: 120px;
-    height: 120px;
+    /* clamp() handles sizing automatically, just adjust positioning */
     bottom: 20px;
     right: 20px;
+    /* Optional: Slightly reduce the viewport-based scaling on tablets */
+    width: clamp(70px, 10vw, 160px);
+    height: clamp(70px, 10vw, 160px);
   }
 
   #chatbot-box {
     width: 300px;
     height: 450px;
-    bottom: 150px;
-    right: 20px;
+    /* Position handled by React state */
   }
 
   .user-msg,
@@ -268,14 +324,17 @@
 
 @media (max-width: 480px) {
   #chatbot-btn {
-    width: 100px;
-    height: 100px;
+    /* Smaller scaling range for mobile phones */
+    width: clamp(60px, 8vw, 120px);
+    height: clamp(60px, 8vw, 120px);
+    bottom: 15px;
+    right: 15px;
   }
 
   #chatbot-box {
     width: 280px;
     height: 400px;
-    bottom: 120px;
+    /* Position handled by React state */
   }
 
   #chat-header {
@@ -298,10 +357,50 @@
 }
 
 /* ===============================
-   ANIMATIONS
+   ULTRA-WIDE SCREEN SUPPORT
+   =============================== */
+@media (min-width: 1920px) {
+  #chatbot-btn {
+    /* Larger scaling range for ultra-wide screens */
+    width: clamp(120px, 15vw, 250px);
+    height: clamp(120px, 15vw, 250px);
+  }
+}
+
+/* ===============================
+   ANIMATIONS & DRAG ENHANCEMENTS
    =============================== */
 #chatbot-box {
   animation: slideUp 0.3s ease-out;
+}
+
+/* Prevent text selection during drag globally */
+body.dragging {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* Smooth transitions for non-dragging state */
+#chatbot-box:not(.dragging) {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Touch-friendly drag area indicator */
+@media (hover: none) and (pointer: coarse) {
+  #chat-header::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    pointer-events: none;
+  }
 }
 
 @keyframes slideUp {

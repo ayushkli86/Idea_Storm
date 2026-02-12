@@ -1,41 +1,43 @@
 /* Scanning Portal Animations */
 @keyframes portal-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(94, 234, 212, 0.3),
-                0 0 40px rgba(94, 234, 212, 0.2),
-                0 0 60px rgba(94, 234, 212, 0.1);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4),
+                0 0 60px rgba(16, 185, 129, 0.3),
+                0 0 90px rgba(16, 185, 129, 0.2),
+                inset 0 0 20px rgba(16, 185, 129, 0.1);
   }
   50% {
-    box-shadow: 0 0 30px rgba(94, 234, 212, 0.5),
-                0 0 60px rgba(94, 234, 212, 0.3),
-                0 0 90px rgba(94, 234, 212, 0.2);
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.6),
+                0 0 80px rgba(16, 185, 129, 0.4),
+                0 0 120px rgba(16, 185, 129, 0.3),
+                inset 0 0 30px rgba(16, 185, 129, 0.2);
   }
 }
 
 @keyframes portal-pulse {
   0%, 100% {
     transform: scale(1);
-    opacity: 1;
+    border-color: rgba(16, 185, 129, 0.6);
   }
   50% {
-    transform: scale(1.02);
-    opacity: 0.9;
+    transform: scale(1.03);
+    border-color: rgba(16, 185, 129, 0.9);
   }
 }
 
 @keyframes scanning-laser {
   0% {
-    top: 10%;
+    top: 0%;
     opacity: 0;
   }
-  10% {
+  5% {
     opacity: 1;
   }
-  90% {
+  95% {
     opacity: 1;
   }
   100% {
-    top: 90%;
+    top: 100%;
     opacity: 0;
   }
 }
@@ -51,18 +53,44 @@
   }
 }
 
+@keyframes button-3d-hover {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+  100% {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5),
+                0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
 .portal-glow {
   animation: portal-glow 3s ease-in-out infinite;
 }
 
 .portal-pulse {
-  animation: portal-pulse 2s ease-in-out infinite;
+  animation: portal-pulse 2.5s ease-in-out infinite;
 }
 
 .scanning-laser {
-  animation: scanning-laser 2s ease-in-out infinite;
+  animation: scanning-laser 3s ease-in-out infinite;
 }
 
 .animate-fade-up {
   animation: fade-up 0.5s ease-out;
+}
+
+.button-3d {
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.button-3d:hover {
+  animation: button-3d-hover 0.2s ease forwards;
+}
+
+.button-3d:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
 }

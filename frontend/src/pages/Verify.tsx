@@ -212,34 +212,40 @@ const Verify = () => {
 
         {status === "idle" && (
           <div className="space-y-6 animate-fade-up">
-            {/* Enhanced Scanner Portal */}
-            <div className="relative bg-white/10 backdrop-blur-md rounded-3xl border-2 border-teal-400/50 p-12 flex flex-col items-center gap-6 portal-glow portal-pulse">
-              <div className="relative w-32 h-32">
-                {/* QR Icon with scanning laser */}
-                <QrCode className="w-32 h-32 text-teal-300" />
-                {/* Scanning Laser Line */}
-                <div className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-teal-400 to-transparent scanning-laser" style={{ top: '10%' }} />
+            {/* Enhanced Scanner Portal - Enlarged with Neon Green Border */}
+            <div className="relative bg-white/10 backdrop-blur-md rounded-3xl border-4 border-emerald-500 p-16 flex flex-col items-center gap-8 portal-glow portal-pulse">
+              <div className="relative w-40 h-40">
+                {/* QR Icon with vertical scanning laser */}
+                <QrCode className="w-40 h-40 text-emerald-400" strokeWidth={1.5} />
+                {/* Vertical Scanning Laser Line */}
+                <div 
+                  className="absolute left-0 right-0 h-1 scanning-laser"
+                  style={{
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.8) 50%, transparent 100%)',
+                    boxShadow: '0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.5)'
+                  }}
+                />
                 {/* Pulsing Center Dot */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-teal-400 animate-ping opacity-75" />
-                  <div className="absolute w-6 h-6 rounded-full bg-teal-300" />
+                  <div className="w-10 h-10 rounded-full bg-emerald-400 animate-ping opacity-75" />
+                  <div className="absolute w-8 h-8 rounded-full bg-emerald-300" />
                 </div>
               </div>
               
               <div className="text-center">
-                <h3 className="text-xl font-bold text-white mb-2">Scanner Portal</h3>
-                <p className="text-sm text-white/70">Ready to verify your medicine</p>
+                <h3 className="text-2xl font-bold text-white mb-2">Scanner Portal</h3>
+                <p className="text-sm text-white/80">Ready to verify your medicine</p>
               </div>
               
               <Button
                 onClick={() => setShowScanner(true)}
-                className="bg-teal-500 hover:bg-teal-400 text-white border-0 gap-2 px-8 py-6 text-lg font-semibold shadow-lg shadow-teal-500/50 hover:shadow-teal-400/60 transition-all"
+                className="button-3d bg-emerald-600 hover:bg-emerald-500 text-white font-bold border-0 gap-3 px-10 py-7 text-lg shadow-lg"
                 size="lg"
               >
-                <Camera className="w-6 h-6" />
+                <Camera className="w-7 h-7" />
                 Scan QR Code
               </Button>
-              <p className="text-xs text-white/60 text-center max-w-xs">
+              <p className="text-xs text-white/70 text-center max-w-sm">
                 Click to open camera and scan the QR code on your medicine package
               </p>
             </div>
@@ -251,9 +257,9 @@ const Verify = () => {
               <div className="flex-1 h-px bg-white/20" />
             </div>
 
-            {/* Enhanced Input Section */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
-              <label className="block text-sm font-medium text-white mb-3">
+            {/* Enhanced Input Section - Cohesive Glassmorphic Card */}
+            <div className="bg-white/15 backdrop-blur-lg rounded-2xl border-2 border-white/30 p-8 shadow-xl">
+              <label className="block text-base font-semibold text-white mb-4">
                 Enter Product ID
               </label>
               <div className="flex gap-3">
@@ -262,14 +268,14 @@ const Verify = () => {
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleVerify()}
-                  className="flex-1 bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:bg-white/30 focus:border-teal-400"
+                  className="flex-1 bg-white/25 border-2 border-white/40 text-white placeholder:text-white/60 focus:bg-white/35 focus:border-emerald-400 text-base font-medium h-12"
                 />
                 <Button 
                   onClick={handleVerify} 
                   disabled={!code || loading} 
-                  className="bg-teal-500 hover:bg-teal-400 text-white border-0 px-6 font-semibold shadow-lg shadow-teal-500/50 hover:shadow-teal-400/60 transition-all"
+                  className="button-3d bg-emerald-600 hover:bg-emerald-500 text-white font-bold border-0 px-8 h-12 text-base"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Verify'}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify'}
                 </Button>
               </div>
             </div>
@@ -347,7 +353,7 @@ const Verify = () => {
                 </div>
               )}
             </div>
-            <Button onClick={handleReset} variant="outline" className="w-full">
+            <Button onClick={handleReset} variant="outline" className="w-full button-3d">
               Verify Another
             </Button>
           </div>
@@ -438,7 +444,7 @@ const Verify = () => {
                 <p className="mt-1">If you believe this is an error, please contact the manufacturer or DDA.</p>
               </div>
             </div>
-            <Button onClick={handleReset} variant="outline" className="w-full">
+            <Button onClick={handleReset} variant="outline" className="w-full button-3d">
               Verify Another
             </Button>
           </div>
@@ -459,7 +465,7 @@ const Verify = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 Unable to connect to the verification service. Please check your internet connection and try again.
               </p>
-              <Button onClick={handleReset} variant="outline" className="w-full">
+              <Button onClick={handleReset} variant="outline" className="w-full button-3d">
                 Try Again
               </Button>
             </div>
@@ -475,28 +481,40 @@ const Verify = () => {
           />
         )}
 
-        {/* Floating Chat Help Bubble - positioned to not overlap with main chatbot */}
+        {/* Floating Chat Help Bubble - Robot Mascot with "Scanning Help" - LEFT SIDE */}
         <button
           onClick={() => setShowChatHelp(!showChatHelp)}
-          className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center justify-center group z-40"
-          aria-label="How to scan help"
+          className="button-3d fixed bottom-24 left-6 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full shadow-2xl hover:shadow-emerald-500/50 transition-all flex items-center gap-3 px-5 py-3 group z-40"
+          aria-label="Chat help"
         >
-          <MessageCircle className="w-6 h-6 text-white" />
-          {/* Notification Badge */}
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md animate-pulse">
-            ?
-          </span>
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+            <MessageCircle className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-white font-semibold text-sm pr-1">Scanning Help</span>
+          
           {/* Tooltip */}
           {showChatHelp && (
-            <div className="absolute bottom-full right-0 mb-2 w-48 bg-white rounded-lg shadow-xl p-3 text-left border border-teal-200">
-              <p className="text-xs font-semibold text-teal-700 mb-1">How to scan?</p>
-              <p className="text-xs text-slate-600">
-                1. Click "Scan QR Code" button<br/>
-                2. Allow camera access<br/>
-                3. Point at medicine QR code<br/>
-                4. Wait for automatic verification
-              </p>
-              <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-teal-200"></div>
+            <div className="absolute bottom-full left-0 mb-3 w-56 bg-white rounded-xl shadow-2xl p-4 text-left border-2 border-emerald-200 animate-fade-up">
+              <p className="text-sm font-bold text-emerald-700 mb-2">🤖 Scanning Help</p>
+              <ul className="text-xs text-slate-700 space-y-1.5">
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-600 font-bold">1.</span>
+                  <span>Click "Scan QR Code" button above</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-600 font-bold">2.</span>
+                  <span>Allow camera access when prompted</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-600 font-bold">3.</span>
+                  <span>Point camera at medicine QR code</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-emerald-600 font-bold">4.</span>
+                  <span>Wait for automatic verification</span>
+                </li>
+              </ul>
+              <div className="absolute bottom-0 left-8 transform translate-y-1/2 rotate-45 w-3 h-3 bg-white border-r-2 border-b-2 border-emerald-200"></div>
             </div>
           )}
         </button>

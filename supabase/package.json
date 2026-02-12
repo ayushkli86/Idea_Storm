@@ -1,0 +1,16 @@
+{
+  "name": "supabase-medicine-upload",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Upload medicine data to Supabase",
+  "scripts": {
+    "upload": "node upload-medicine-data-final.js",
+    "update-hashes": "node update-transaction-hashes.js",
+    "update-new-hashes": "node update-new-hashes.js",
+    "generate-qr": "node generate-qr-codes.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "qrcode": "^1.5.3"
+  }
+}

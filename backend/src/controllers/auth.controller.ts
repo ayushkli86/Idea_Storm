@@ -29,8 +29,7 @@ class AuthController {
 
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
-        process.env.JWT_SECRET!,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+        process.env.JWT_SECRET!
       );
 
       logger.info(`User registered: ${email}`);
@@ -66,8 +65,7 @@ class AuthController {
 
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
-        process.env.JWT_SECRET!,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+        process.env.JWT_SECRET!
       );
 
       logger.info(`User logged in: ${email}`);
@@ -99,8 +97,7 @@ class AuthController {
 
       const newToken = jwt.sign(
         { id: decoded.id, email: decoded.email, role: decoded.role },
-        process.env.JWT_SECRET!,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+        process.env.JWT_SECRET!
       );
 
       res.json({ token: newToken });

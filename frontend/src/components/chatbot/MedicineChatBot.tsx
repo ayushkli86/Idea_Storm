@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { knowledgeBaseService } from '@/services/knowledgeBase.service';
 import './MedicineChatBot.css';
 
 interface Message {
@@ -33,14 +34,7 @@ interface DragState {
 
 const MedicineChatBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! I can help you verify medicines and answer questions about pharmaceutical safety. How can I assist you today?',
-      sender: 'bot',
-      timestamp: new Date(),
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   
@@ -57,6 +51,11 @@ const MedicineChatBot: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Initialize knowledge base on component mount
+  useEffect(() => {
+    knowledgeBaseService.initialize();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -158,54 +157,31 @@ const MedicineChatBot: React.FC = () => {
   const getBotResponse = async (userMessage: string): Promise<string> => {
     const message = userMessage.toLowerCase();
     
-    // Extract product ID patterns
+    // Extract product ID patterns for verification
     const productIdMatch = message.match(/med-[a-z0-9]+/i) || 
                           message.match(/[a-z]+-[a-z0-9]+/i) ||
                           message.match(/[a-z0-9]{6,}/i);
     
-    // Medicine verification
-    if (message.includes('verify') || message.includes('check') || productIdMatch) {
-      if (productIdMatch) {
-        const productId = productIdMatch[0].toUpperCase();
-        const result = await verifyMedicine(productId);
-        
-        if (result) {
-          return formatVerificationResult(result);
-        } else {
-          return `❌ Verification Error\n\nI couldn't verify "${productId}" right now. Please try again later or use our main verification page.`;
-        }
+    // Priority 1: Medicine verification (if product ID detected)
+    if (productIdMatch) {
+      const productId = productIdMatch[0].toUpperCase();
+      const result = await verifyMedicine(productId);
+      
+      if (result) {
+        return formatVerificationResult(result);
       } else {
-        return `🔍 Medicine Verification\n\nTo verify a medicine, please provide the product ID (e.g., MED-AUTH001) or scan the QR code.\n\nExample: "Verify MED-AUTH001"`;
+        return `❌ Verification Error\n\nI couldn't verify "${productId}" right now. Please try again later or use our main verification page.`;
       }
     }
 
-    // How it works
-    if (message.includes('how') && (message.includes('work') || message.includes('system'))) {
-      return `🔧 How MediChain Works\n\n1. Medicine Registration: Manufacturers register products on blockchain\n2. QR Generation: Each medicine gets unique digital fingerprint\n3. Verification Process: Scan QR or enter product ID\n4. Multi-layer Check: Database → Blockchain → Expiry validation\n5. Real-time Results: Instant authenticity confirmation\n\nOur system uses blockchain technology to ensure medicine authenticity.`;
+    // Priority 2: Use knowledge base for ALL other questions
+    try {
+      const kbResponse = knowledgeBaseService.getResponse(userMessage);
+      return kbResponse;
+    } catch (error) {
+      console.error('Knowledge base error:', error);
+      return "I'm having trouble processing your question. Please try again.";
     }
-
-    // Security features
-    if (message.includes('security') || message.includes('safe') || message.includes('blockchain')) {
-      return `🛡️ Security Features\n\n• Blockchain Technology: Immutable medicine records\n• QR Code Security: One-time use, tamper-proof\n• Multi-layer Verification: Database + Blockchain + Expiry\n• Real-time Validation: Instant authenticity checks\n• Privacy Protection: No personal data on blockchain\n\nYour safety is our priority!`;
-    }
-
-    // Report counterfeit
-    if (message.includes('report') || message.includes('counterfeit') || message.includes('fake')) {
-      return `🚨 Report Counterfeit Medicine\n\nIf you found a counterfeit medicine:\n\n1. STOP using it immediately\n2. Take photos of packaging and product\n3. Note purchase location and date\n4. Report to local drug authority\n5. Contact the manufacturer\n\nEmergency: If consumed, seek medical attention immediately!`;
-    }
-
-    // General help
-    if (message.includes('help') || message.includes('support')) {
-      return `💡 How I Can Help\n\n• Verify medicines by product ID\n• Explain how our system works\n• Provide security information\n• Guide you through reporting counterfeit products\n• Answer questions about medicine safety\n\nTry: "Verify MED-AUTH001" or "How does it work?"`;
-    }
-
-    // Greeting responses
-    if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-      return `👋 Hello! I'm your MediChain assistant. I can help you verify medicines and ensure your safety.\n\nWhat can I help you with today?\n\n• Type a product ID to verify\n• Ask "How does it work?"\n• Say "Help" for more options`;
-    }
-
-    // Default response
-    return `🤔 I'm here to help with medicine verification and safety!\n\nI can help you with:\n• Medicine verification - "Verify MED-AUTH001"\n• System information - "How does it work?"\n• Security details - "Is it secure?"\n• Report issues - "Report counterfeit"\n\nWhat would you like to know?`;
   };
 
   const handleSendMessage = async () => {
@@ -227,6 +203,7 @@ const MedicineChatBot: React.FC = () => {
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
+    // No initial message - chat starts empty
   };
 
   const closeChat = () => {
@@ -467,7 +444,7 @@ const MedicineChatBot: React.FC = () => {
             <input
               type="text"
               id="user-input"
-              placeholder="Ask about medicine..."
+              placeholder=""
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleSendMessage())}

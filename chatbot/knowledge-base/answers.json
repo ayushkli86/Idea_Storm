@@ -1,0 +1,83 @@
+{
+  "responses": {
+    "greetings": {
+      "answers": [
+        "Hello! 👋",
+        "Hi there! 😊",
+        "Namaste! 🙏"
+      ],
+      "type": "greeting"
+    },
+    "medicine_storage": {
+      "answers": [
+        "📦 Proper Medicine Storage:\n\n✅ DO:\n• Store in a cool, dry place (15-25°C)\n• Keep away from direct sunlight\n• Store in original packaging\n• Keep out of reach of children\n• Check storage instructions on label\n\n❌ DON'T:\n• Store in bathroom (humidity damages medicines)\n• Keep near heat sources\n• Mix different medicines in one container\n• Remove from original packaging\n\n💡 Tip: Some medicines need refrigeration - always check the label!"
+      ],
+      "type": "informational"
+    },
+    "medicine_usage": {
+      "answers": [
+        "💊 Medicine Usage Guidelines:\n\n1. Follow Doctor's Prescription: Always take as prescribed\n2. Timing: Check if before/after food\n3. Dosage: Never exceed recommended dose\n4. Duration: Complete the full course\n5. Water: Take with adequate water unless specified\n\n⏰ Common Timings:\n• Before food: 30 mins before meals\n• After food: 30 mins after meals\n• Empty stomach: 1 hour before or 2 hours after food\n\n⚠️ Always read the medicine label and follow your doctor's instructions!"
+      ],
+      "type": "informational"
+    },
+    "expired_medicine": {
+      "answers": [
+        "⏰ Expired Medicine - Important Information:\n\n🚨 NEVER use expired medicines!\n\nWhy?\n• Reduced effectiveness\n• Potential harmful chemical changes\n• Risk of bacterial growth\n• May cause adverse reactions\n\n✅ What to do:\n1. Check expiry date regularly\n2. Dispose of expired medicines safely\n3. Return to pharmacy for proper disposal\n4. Don't flush down toilet or throw in trash\n5. Get fresh prescription from doctor\n\n💡 Tip: Check your medicine cabinet every 6 months!"
+      ],
+      "type": "warning"
+    },
+    "counterfeit_detection": {
+      "answers": [
+        "🔍 How to Identify Counterfeit Medicines:\n\n🚨 Warning Signs:\n• Suspiciously low price\n• Poor quality packaging\n• Spelling mistakes on label\n• No batch number or expiry date\n• Unusual color, smell, or taste\n• Broken or tampered seals\n• No manufacturer information\n\n✅ Verification Steps:\n1. Use our QR code scanner\n2. Check hologram/security features\n3. Verify batch number with manufacturer\n4. Buy only from licensed pharmacies\n5. Report suspicious medicines to authorities\n\n💡 Use MediChain to verify authenticity instantly!"
+      ],
+      "type": "warning"
+    },
+    "pregnancy_breastfeeding": {
+      "answers": [
+        "🤰 Medicine During Pregnancy & Breastfeeding:\n\n⚠️ CRITICAL: Always consult your doctor first!\n\nGeneral Guidelines:\n• Many medicines are NOT safe during pregnancy\n• Some medicines pass through breast milk\n• Risk varies by trimester\n• Natural doesn't always mean safe\n\n✅ Safe Practices:\n1. Inform doctor about pregnancy/breastfeeding\n2. Use only prescribed medicines\n3. Avoid self-medication\n4. Read medicine labels carefully\n5. Report any side effects immediately\n\n🚨 Emergency? Contact your healthcare provider right away!\n\nNote: This is general information. Always consult your doctor for personalized advice."
+      ],
+      "type": "warning"
+    },
+    "children_medicine": {
+      "answers": [
+        "👶 Children's Medicine Safety:\n\n⚠️ Special Precautions Needed!\n\nKey Points:\n• Dosage based on weight/age\n• Never give adult medicines to children\n• Use measuring devices (not spoons)\n• Keep medicines locked away\n• Avoid aspirin for children under 16\n\n✅ Safety Tips:\n1. Always follow pediatrician's advice\n2. Double-check dosage\n3. Use child-resistant caps\n4. Never call medicine 'candy'\n5. Store out of reach and sight\n\n🚨 Overdose Emergency:\nCall poison control or emergency services immediately!\n\n💡 Keep emergency numbers handy!"
+      ],
+      "type": "warning"
+    },
+    "allergies": {
+      "answers": [
+        "🚨 Medicine Allergies - Important Information:\n\nCommon Allergy Symptoms:\n• Skin rash or hives\n• Itching\n• Swelling (face, lips, tongue)\n• Difficulty breathing\n• Dizziness or fainting\n\n⚠️ Severe Reaction (Anaphylaxis):\n• Seek emergency help immediately!\n• Use EpiPen if prescribed\n• Call emergency services\n\n✅ Prevention:\n1. Inform doctors about all allergies\n2. Wear medical alert bracelet\n3. Read medicine labels carefully\n4. Keep allergy list updated\n5. Carry emergency medication if prescribed\n\n💡 Always do an allergy test for new medicines under medical supervision!"
+      ],
+      "type": "warning"
+    },
+    "interactions": {
+      "answers": [
+        "⚠️ Medicine Interactions:\n\nDangerous Combinations:\n• Medicine + Medicine\n• Medicine + Food\n• Medicine + Alcohol\n• Medicine + Supplements\n\n🚨 Common Interactions:\n• Blood thinners + Aspirin\n• Antibiotics + Dairy products\n• Painkillers + Alcohol\n• Antidepressants + certain foods\n\n✅ Safety Steps:\n1. Tell doctor about ALL medicines you take\n2. Include vitamins and supplements\n3. Use one pharmacy for all prescriptions\n4. Read medicine information leaflets\n5. Ask pharmacist about interactions\n\n💡 Keep a list of all your medicines and show it to every healthcare provider!"
+      ],
+      "type": "warning"
+    },
+    "emergency": {
+      "answers": [
+        "🚨 MEDICAL EMERGENCY - ACT IMMEDIATELY!\n\nOverdose/Poisoning:\n1. Call Emergency Services: 102 (India) / 911 (US)\n2. Call Poison Control: 1800-11-4088 (India)\n3. Don't wait for symptoms\n4. Don't induce vomiting unless told\n5. Keep medicine packaging with you\n\nImportant Information to Provide:\n• What was taken\n• How much\n• When it was taken\n• Person's age and weight\n• Current symptoms\n\n⚠️ While Waiting for Help:\n• Keep person calm and comfortable\n• Monitor breathing\n• Don't give anything by mouth\n• Save medicine container\n\n🚨 THIS IS AN EMERGENCY - SEEK PROFESSIONAL HELP IMMEDIATELY!"
+      ],
+      "type": "emergency"
+    },
+    "verification": {
+      "answers": [
+        "🔍 Medicine Verification with MediChain:\n\nHow to Verify:\n1. Scan QR Code on medicine packaging\n2. Or enter Product ID (e.g., MED-AUTH001)\n3. Get instant verification results\n\n✅ What We Check:\n• Database authenticity\n• Blockchain verification\n• Expiry date validation\n• Manufacturer information\n• Batch number verification\n\nVerification Results:\n✅ AUTHENTIC - Safe to use\n🚨 COUNTERFEIT - Do NOT use, report immediately\n⏰ EXPIRED - Dispose safely\n⚠️ SUSPICIOUS - Contact manufacturer\n\n💡 Try it now! Type a product ID or say 'verify MED-AUTH001'"
+      ],
+      "type": "informational"
+    },
+    "general_health": {
+      "answers": [
+        "🏥 General Health Tips:\n\nCommon Ailments:\n\n🤒 Fever:\n• Rest and stay hydrated\n• Use fever-reducing medicine if needed\n• Consult doctor if fever persists >3 days\n\n🤧 Cold & Flu:\n• Drink warm fluids\n• Get adequate rest\n• Use steam inhalation\n• Consult doctor if symptoms worsen\n\n💊 When to See a Doctor:\n• High fever (>103°F)\n• Symptoms lasting >1 week\n• Severe pain\n• Difficulty breathing\n• Unusual symptoms\n\n⚠️ This is general information only. Always consult a healthcare professional for proper diagnosis and treatment!"
+      ],
+      "type": "informational"
+    }
+  },
+  "fallback_responses": [
+    "I'm here to help with medicine verification and pharmaceutical safety. Could you please rephrase your question or ask about:\n• Medicine verification\n• Storage guidelines\n• Usage instructions\n• Counterfeit detection",
+    "I specialize in medicine-related queries. For the best assistance, please ask about:\n• Verifying medicine authenticity\n• Proper storage and usage\n• Identifying counterfeit medicines\n\nWhat would you like to know?",
+    "I'm your medicine safety assistant! I can help you with:\n✅ Medicine verification\n✅ Storage guidelines\n✅ Usage instructions\n✅ Counterfeit detection\n\nHow can I assist you today?"
+  ]
+}

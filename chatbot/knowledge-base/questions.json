@@ -1,0 +1,96 @@
+{
+  "categories": {
+    "greetings": [
+      "hello",
+      "hi",
+      "hey",
+      "good morning",
+      "good afternoon",
+      "good evening",
+      "namaste",
+      "how are you"
+    ],
+    "medicine_storage": [
+      "how to store medicine",
+      "where should i keep medicines",
+      "storage temperature",
+      "can i keep in fridge",
+      "medicine storage tips",
+      "how long can i store"
+    ],
+    "medicine_usage": [
+      "how to take medicine",
+      "when to take medicine",
+      "before food or after food",
+      "dosage instructions",
+      "how many times a day",
+      "can i take with water",
+      "medicine timing"
+    ],
+    "expired_medicine": [
+      "expired medicine",
+      "can i use expired medicine",
+      "what to do with expired medicine",
+      "is expired medicine harmful",
+      "medicine past expiry date"
+    ],
+    "counterfeit_detection": [
+      "how to identify fake medicine",
+      "counterfeit medicine signs",
+      "fake drug detection",
+      "how to spot fake medicines",
+      "original vs fake medicine"
+    ],
+    "pregnancy_breastfeeding": [
+      "medicine during pregnancy",
+      "safe for pregnant women",
+      "breastfeeding and medicine",
+      "can i take while pregnant",
+      "medicine for nursing mothers"
+    ],
+    "children_medicine": [
+      "medicine for children",
+      "kids medicine dosage",
+      "safe for babies",
+      "pediatric medicine",
+      "child medicine safety"
+    ],
+    "allergies": [
+      "medicine allergy",
+      "allergic reaction",
+      "what if i am allergic",
+      "allergy symptoms",
+      "medicine intolerance"
+    ],
+    "interactions": [
+      "medicine interaction",
+      "can i take with other medicines",
+      "drug interaction",
+      "medicine combination",
+      "mixing medicines"
+    ],
+    "emergency": [
+      "overdose",
+      "took too much medicine",
+      "emergency",
+      "poisoning",
+      "wrong medicine taken",
+      "medicine accident"
+    ],
+    "verification": [
+      "verify medicine",
+      "check authenticity",
+      "is this original",
+      "scan qr code",
+      "product verification"
+    ],
+    "general_health": [
+      "headache remedy",
+      "fever treatment",
+      "cold and flu",
+      "stomach pain",
+      "common ailments",
+      "home remedies"
+    ]
+  }
+}

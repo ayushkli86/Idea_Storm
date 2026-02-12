@@ -1,29 +1,76 @@
-import { Shield, AlertTriangle, FileText, TrendingDown, Building2, Activity, ExternalLink } from "lucide-react";
+import { Shield, AlertTriangle, FileText, TrendingDown, Building2, Activity } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-
-const recallData = [
-  { id: "DDA-RC-001", drug: "Counterfeit Paracetamol 500mg", manufacturer: "Unknown", date: "2026-02-08", status: "active", affected: "Kathmandu Valley" },
-  { id: "DDA-RC-002", drug: "Substandard Amoxicillin 250mg", manufacturer: "XYZ Pharma", date: "2026-01-28", status: "active", affected: "Eastern Nepal" },
-  { id: "DDA-RC-003", drug: "Expired Metformin 500mg", manufacturer: "ABC Labs", date: "2026-01-15", status: "resolved", affected: "Pokhara" },
-];
-
-const supplyChainData = [
-  { stage: "Manufacturer", verified: 98, flagged: 2 },
-  { stage: "Distributor", verified: 95, flagged: 5 },
-  { stage: "Wholesaler", verified: 91, flagged: 9 },
-  { stage: "Pharmacy", verified: 87, flagged: 13 },
-];
-
-const regulatorStats = [
-  { label: "Active Recalls", value: "2", icon: AlertTriangle, gradient: "gradient-danger" },
-  { label: "Registered Manufacturers", value: "156", icon: Building2, gradient: "gradient-hero" },
-  { label: "Compliance Rate", value: "94.2%", icon: Activity, gradient: "gradient-hero" },
-  { label: "Reports Filed", value: "847", icon: FileText, gradient: "gradient-hero" },
-];
+import { useDashboardData } from "@/hooks/useDashboardData";
+import DashboardSkeleton from "@/components/DashboardSkeleton";
+import EmptyState from "@/components/EmptyState";
 
 const DDAView = () => {
+  const { stats, batches, alerts, isLoading, isError } = useDashboardData();
+
+  // Loading state
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="min-h-screen pt-16 bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <EmptyState
+            icon={AlertTriangle}
+            title="Failed to Load DDA Dashboard"
+            description="Unable to fetch regulatory data. Please check your connection and try again."
+            action={<Button onClick={() => window.location.reload()}>Retry</Button>}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  const statsData = stats.data;
+  const batchData = batches.data || [];
+  const alertData = alerts.data || [];
+
+  // Calculate DDA-specific metrics
+  const totalBatches = batchData.length;
+  const verifiedBatches = batchData.filter(b => b.status === 'verified').length;
+  const flaggedBatches = batchData.filter(b => b.status === 'flagged').length;
+  const complianceRate = totalBatches > 0 ? ((verifiedBatches / totalBatches) * 100).toFixed(1) : '0.0';
+  const activeRecalls = alertData.filter(a => a.status === 'active').length;
+
+  // Get unique manufacturers
+  const manufacturers = new Set(batchData.map(b => b.manufacturer));
+  const manufacturerCount = manufacturers.size;
+
+  // Supply chain integrity data (calculated from batches)
+  const supplyChainData = [
+    { 
+      stage: "Manufacturer", 
+      verified: totalBatches > 0 ? Math.round((verifiedBatches / totalBatches) * 100) : 0,
+      flagged: totalBatches > 0 ? Math.round((flaggedBatches / totalBatches) * 100) : 0
+    },
+    { stage: "Distributor", verified: 95, flagged: 5 },
+    { stage: "Wholesaler", verified: 91, flagged: 9 },
+    { stage: "Pharmacy", verified: 87, flagged: 13 },
+  ];
+
+  const regulatorStats = [
+    { label: "Active Recalls", value: activeRecalls.toString(), icon: AlertTriangle, gradient: activeRecalls > 0 ? "gradient-danger" : "gradient-hero" },
+    { label: "Registered Manufacturers", value: manufacturerCount.toString(), icon: Building2, gradient: "gradient-hero" },
+    { label: "Compliance Rate", value: `${complianceRate}%`, icon: Activity, gradient: "gradient-hero" },
+    { label: "Total Verifications", value: statsData?.totalScans?.toLocaleString() || "0", icon: FileText, gradient: "gradient-hero" },
+  ];
+
+  // Counterfeit trend by region (using dummy data for visualization)
+  const counterfeitTrend = [
+    { region: "Kathmandu Valley", before: 45, after: Math.max(12, flaggedBatches * 2) },
+    { region: "Eastern Nepal", before: 38, after: Math.max(18, flaggedBatches * 3) },
+    { region: "Western Nepal", before: 52, after: Math.max(22, flaggedBatches * 4) },
+    { region: "Terai Region", before: 61, after: Math.max(28, flaggedBatches * 5) },
+  ];
   return (
     <div className="min-h-screen pt-16 bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -77,12 +124,7 @@ const DDAView = () => {
               <span className="text-sm text-success font-medium">55% decrease since Sahi Aaushadi deployment</span>
             </div>
             <div className="space-y-4">
-              {[
-                { region: "Kathmandu Valley", before: 45, after: 12 },
-                { region: "Eastern Nepal", before: 38, after: 18 },
-                { region: "Western Nepal", before: 52, after: 22 },
-                { region: "Terai Region", before: 61, after: 28 },
-              ].map((r, i) => (
+              {counterfeitTrend.map((r, i) => (
                 <div key={i}>
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-muted-foreground">{r.region}</span>
@@ -105,43 +147,51 @@ const DDAView = () => {
         {/* Drug Recalls */}
         <div className="bg-card rounded-xl shadow-card border overflow-hidden">
           <div className="p-6 border-b">
-            <h3 className="font-semibold text-foreground">Active Drug Recalls</h3>
+            <h3 className="font-semibold text-foreground">Active Drug Recalls & Alerts</h3>
             <p className="text-xs text-muted-foreground">Managed under DDA Code 2080 compliance</p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/50">
-                  <th className="text-left p-4 font-medium text-muted-foreground">Recall ID</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground">Drug</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground hidden md:table-cell">Manufacturer</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground hidden lg:table-cell">Affected Area</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground">Status</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground hidden md:table-cell">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recallData.map((r) => (
-                  <tr key={r.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                    <td className="p-4 font-mono text-xs">{r.id}</td>
-                    <td className="p-4 font-medium text-foreground">{r.drug}</td>
-                    <td className="p-4 text-muted-foreground hidden md:table-cell">{r.manufacturer}</td>
-                    <td className="p-4 text-muted-foreground hidden lg:table-cell">{r.affected}</td>
-                    <td className="p-4">
-                      <Badge variant={r.status === "active" ? "destructive" : "secondary"}>
-                        {r.status === "active" ? "Active Recall" : "Resolved"}
-                      </Badge>
-                    </td>
-                    <td className="p-4 hidden md:table-cell">
-                      <Button variant="ghost" size="sm" className="text-xs gap-1">
-                        View <ExternalLink className="w-3 h-3" />
-                      </Button>
-                    </td>
+          {alertData.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-muted/50">
+                    <th className="text-left p-4 font-medium text-muted-foreground">Alert ID</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground">Drug</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground hidden md:table-cell">Batch Number</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground hidden lg:table-cell">Affected Area</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground">Severity</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {alertData.map((alert) => (
+                    <tr key={alert.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                      <td className="p-4 font-mono text-xs">{alert.product_id}</td>
+                      <td className="p-4 font-medium text-foreground">{alert.drug_name}</td>
+                      <td className="p-4 text-muted-foreground hidden md:table-cell">{alert.batch_number}</td>
+                      <td className="p-4 text-muted-foreground hidden lg:table-cell">{alert.affected_regions.join(", ")}</td>
+                      <td className="p-4">
+                        <Badge variant={alert.severity === "high" ? "destructive" : "secondary"}>
+                          {alert.severity.toUpperCase()}
+                        </Badge>
+                      </td>
+                      <td className="p-4">
+                        <Badge variant={alert.status === "active" ? "destructive" : "secondary"}>
+                          {alert.status === "active" ? "Active" : "Resolved"}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="p-12 text-center">
+              <Shield className="w-12 h-12 mx-auto mb-3 text-success" />
+              <p className="text-sm font-medium text-foreground mb-1">No Active Alerts</p>
+              <p className="text-xs text-muted-foreground">All medicines are verified and compliant</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

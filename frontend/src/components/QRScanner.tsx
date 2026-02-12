@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { Camera, X, Loader2 } from 'lucide-react';
+import { Camera, X, Loader2, SwitchCamera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface QRScannerProps {
@@ -8,9 +8,13 @@ interface QRScannerProps {
   onClose: () => void;
 }
 
+type FacingMode = 'environment' | 'user';
+
 const QRScanner = ({ onScanSuccess, onClose }: QRScannerProps) => {
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string>('');
+  const [facingMode, setFacingMode] = useState<FacingMode>('environment'); // 'environment' = back, 'user' = front
+  const [isSwitching, setIsSwitching] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const hasStarted = useRef(false);
 
@@ -19,59 +23,65 @@ const QRScanner = ({ onScanSuccess, onClose }: QRScannerProps) => {
     if (hasStarted.current) return;
     hasStarted.current = true;
 
-    const startScanner = async () => {
-      try {
-        setIsScanning(true);
-        setError('');
-
-        // Initialize scanner
-        const scanner = new Html5Qrcode('qr-reader');
-        scannerRef.current = scanner;
-
-        // Request camera permission and start scanning
-        await scanner.start(
-          { facingMode: 'environment' }, // Use back camera on mobile
-          {
-            fps: 10, // Frames per second
-            qrbox: { width: 250, height: 250 }, // Scanning box size
-            aspectRatio: 1.0,
-          },
-          (decodedText) => {
-            // Success callback
-            console.log('QR Code detected:', decodedText);
-            handleScanSuccess(decodedText);
-          },
-          (errorMessage) => {
-            // Error callback (can be ignored for continuous scanning)
-            // console.log('Scan error:', errorMessage);
-          }
-        );
-
-        setIsScanning(false);
-      } catch (err: any) {
-        console.error('Scanner initialization error:', err);
-        setIsScanning(false);
-        
-        // Handle specific errors
-        if (err.name === 'NotAllowedError') {
-          setError('Camera permission denied. Please allow camera access and try again.');
-        } else if (err.name === 'NotFoundError') {
-          setError('No camera found on this device.');
-        } else if (err.name === 'NotReadableError') {
-          setError('Camera is already in use by another application.');
-        } else {
-          setError('Failed to start camera. Please try again.');
-        }
-      }
-    };
-
-    startScanner();
+    startScanner(facingMode);
 
     // Cleanup function
     return () => {
       stopScanner();
     };
   }, []);
+
+  const startScanner = async (cameraFacingMode: FacingMode) => {
+    try {
+      setIsScanning(true);
+      setError('');
+
+      // Initialize scanner if not already initialized
+      if (!scannerRef.current) {
+        const scanner = new Html5Qrcode('qr-reader');
+        scannerRef.current = scanner;
+      }
+
+      const scanner = scannerRef.current;
+
+      // Request camera permission and start scanning
+      await scanner.start(
+        { facingMode: cameraFacingMode }, // Use specified camera
+        {
+          fps: 10, // Frames per second
+          qrbox: { width: 250, height: 250 }, // Scanning box size
+          aspectRatio: 1.0,
+        },
+        (decodedText) => {
+          // Success callback
+          console.log('QR Code detected:', decodedText);
+          handleScanSuccess(decodedText);
+        },
+        (errorMessage) => {
+          // Error callback (can be ignored for continuous scanning)
+          // console.log('Scan error:', errorMessage);
+        }
+      );
+
+      setIsScanning(false);
+      setIsSwitching(false);
+    } catch (err: any) {
+      console.error('Scanner initialization error:', err);
+      setIsScanning(false);
+      setIsSwitching(false);
+      
+      // Handle specific errors
+      if (err.name === 'NotAllowedError') {
+        setError('Camera permission denied. Please allow camera access and try again.');
+      } else if (err.name === 'NotFoundError') {
+        setError('No camera found on this device.');
+      } else if (err.name === 'NotReadableError') {
+        setError('Camera is already in use by another application.');
+      } else {
+        setError('Failed to start camera. Please try again.');
+      }
+    }
+  };
 
   const stopScanner = async () => {
     if (scannerRef.current) {
@@ -101,6 +111,30 @@ const QRScanner = ({ onScanSuccess, onClose }: QRScannerProps) => {
     onClose();
   };
 
+  const handleSwitchCamera = async () => {
+    if (isSwitching || isScanning) return;
+
+    try {
+      setIsSwitching(true);
+      
+      // Stop current scanner
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        await scannerRef.current.stop();
+      }
+
+      // Toggle facing mode
+      const newFacingMode: FacingMode = facingMode === 'environment' ? 'user' : 'environment';
+      setFacingMode(newFacingMode);
+
+      // Start scanner with new camera
+      await startScanner(newFacingMode);
+    } catch (err) {
+      console.error('Error switching camera:', err);
+      setError('Failed to switch camera. Please try again.');
+      setIsSwitching(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm animate-fade-in">
       <div className="container mx-auto px-4 py-6 h-full flex flex-col">
@@ -112,17 +146,33 @@ const QRScanner = ({ onScanSuccess, onClose }: QRScannerProps) => {
               Scan QR Code
             </h2>
             <p className="text-sm text-muted-foreground">
-              Position the QR code within the frame
+              {facingMode === 'environment' ? '📷 Back Camera' : '🤳 Front Camera'}
             </p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleClose}
-            className="rounded-full"
-          >
-            <X className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleSwitchCamera}
+              disabled={isSwitching || isScanning || !!error}
+              className="rounded-full"
+              title="Switch Camera"
+            >
+              {isSwitching ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <SwitchCamera className="w-5 h-5" />
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleClose}
+              className="rounded-full"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
 
         {/* Scanner Container */}

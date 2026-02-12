@@ -7,17 +7,22 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-orange-50 flex items-center justify-center p-4">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        background: 'linear-gradient(135deg, #163A2C 0%, #1B4433 35%, #0F2A21 70%, #0B2019 100%)'
+      }}
+    >
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/20">
               <Shield className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900">Sahi Aaushadi</h1>
+            <h1 className="text-3xl font-bold text-white">Sahi Aaushadi</h1>
           </div>
-          <p className="text-slate-600 text-sm">Authentic Medicine Verification System</p>
+          <p className="text-white/80 text-sm">Authentic Medicine Verification System</p>
         </div>
 
         {/* Auth Card */}
